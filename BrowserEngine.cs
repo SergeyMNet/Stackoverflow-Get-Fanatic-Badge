@@ -5,15 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using OpenQA.Selenium.Remote;
+using System.Runtime.InteropServices;
 
 namespace StackoverflowGetFanaticBadge
 {
     public class BrowserEngine : IDisposable
     {
         private IWebDriver _chrome;
+        private bool _isWin;
 
         public BrowserEngine()
         {
+            _isWin = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+            // just give some time to upload chrome container
+            if(!_isWin)
+                Thread.Sleep(10000);
+
             Init();
         }
 
@@ -26,8 +35,21 @@ namespace StackoverflowGetFanaticBadge
 
             var options = new ChromeOptions();
             options.AddArguments("--headless"); // hide UI
-            options.AddArguments("--disable-gpu");
-            _chrome = new ChromeDriver(options);
+            
+            if(_isWin) 
+            {
+                // WINDOWS
+                options.AddArguments("--disable-gpu");
+                _chrome = new ChromeDriver(options);
+            }
+            else
+            {
+                // DOCKER LINUX
+                options.AddArgument("no-sandbox");
+                _chrome = new RemoteWebDriver(new Uri("http://172.16.238.5:4444/wd/hub"), options);
+            }
+
+            
         }
 
         /// <summary>
