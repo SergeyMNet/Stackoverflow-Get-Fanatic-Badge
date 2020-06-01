@@ -30,7 +30,8 @@ namespace StackoverflowGetFanaticBadge
 
                 try
                 {
-                    using (var browser = new BrowserEngine())
+                    var chromeUrl = _configuration["RemoteWebDriverUrl"];
+                    using (var browser = new BrowserEngine(chromeUrl))
                     {
                         var login = _configuration["Login"];
                         var pass = _configuration["Password"];

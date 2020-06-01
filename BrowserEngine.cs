@@ -14,10 +14,12 @@ namespace StackoverflowGetFanaticBadge
     {
         private IWebDriver _chrome;
         private bool _isWin;
+        private string _chromeUrl;
 
-        public BrowserEngine()
+        public BrowserEngine(string chromeUrl)
         {
             _isWin = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            _chromeUrl = chromeUrl;
 
             // just give some time to upload chrome container
             if(!_isWin)
@@ -46,10 +48,8 @@ namespace StackoverflowGetFanaticBadge
             {
                 // DOCKER LINUX
                 options.AddArgument("no-sandbox");
-                _chrome = new RemoteWebDriver(new Uri("http://172.16.238.5:4444/wd/hub"), options);
+                _chrome = new RemoteWebDriver(new Uri($"{_chromeUrl}/wd/hub"), options);
             }
-
-            
         }
 
         /// <summary>
